@@ -1,7 +1,10 @@
+from fake_useragent import UserAgent
 from bs4 import BeautifulSoup
 import requests
 import os
 import datetime
+from proxy_settings import proxy
+from proxy_settings import use_proxy
 
 style = '''<style>
     div header h1 {
@@ -134,6 +137,11 @@ style = '''<style>
     }
 </style>'''
 
+proxies_set = {
+  "http": proxy,
+  "https": proxy
+}
+
 color_table = {'Blue': '\033[94m',
                'Green': '\033[92m',
                'Red': '\033[91m',
@@ -141,37 +149,40 @@ color_table = {'Blue': '\033[94m',
                'Mark': '\033[100m',
                'Clear': '\033[0m'}
 
-st_accept = "text/html"
 
-st_useragent = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 12_3_1) AppleWebKit"
-                "/605.1.15 (HTML, like Gecko) Version/15.4 Safari/605.1.15")
+class CreateFolder:
+    folder_name = "folder_title date_time"
 
-headers = {
-    "Accept": st_accept,
-    "User-Agent": st_useragent
-}
+    def __init__(self, folder_title, folder_datetime):
 
-parse_title = input(f"{color_table['Clear']}{color_table['Blue']}Title: ").capitalize()
+        self.folder_name = f"{folder_title} {folder_datetime.replace(':', ';')}"
 
-start_datetime_ms = str(datetime.datetime.now())
-start_datetime = start_datetime_ms[:start_datetime_ms.find('.')] if '.' in start_datetime_ms else start_datetime_ms
-
-print(f"{color_table['Clear']}{color_table['Purple']}Start date and time: {start_datetime}")
-
-folder_name = f"{parse_title} {start_datetime.replace(':', ';')}"
-
-try:
-    os.mkdir(folder_name)
-except FileExistsError:
-    pass
+        try:
+            os.mkdir(self.folder_name)
+        except FileExistsError:
+            pass
 
 
-def send_request(title, month, day):
-    request = requests.get(f'https://telegra.ph/{title}-{month}-{day}', headers)
+def datetime_calculate():
+    start_datetime_ms = str(datetime.datetime.now())
+    start_datetime = start_datetime_ms[:start_datetime_ms.find('.')] if '.' in start_datetime_ms else start_datetime_ms
+
+    return start_datetime
+
+
+def send_request(title, month, day,  folder_path, using_proxy: bool = False):
+    headers = {"User-Agent": UserAgent().random, "Accept": "text/html"}
+
+    if using_proxy:
+        request = requests.get(f'https://telegra.ph/{title}-{month}-{day}', headers, proxies=proxies_set)
+    else:
+        request = requests.get(f'https://telegra.ph/{title}-{month}-{day}', headers)
+
     request_text = request.text
     soup = BeautifulSoup(request_text, 'html.parser')
+
     if request.status_code == 200:
-        with open(f"{folder_name}/{title}-{month}-{day}.html", "w", encoding='utf-8') as file:
+        with open(f"{folder_path}/{title}-{month}-{day}.html", "w", encoding='utf-8') as file:
             file.write('<div>' + str(soup.header) +
                        F"{''.join(map(str, soup.article.find_all('p')))}"
                        F"<aside><a href='https://telegra.ph/{title}-{month}-{day}'>"
@@ -184,6 +195,14 @@ def send_request(title, month, day):
 
 
 def main():
+    date_time = datetime_calculate()
+
+    print(f"{color_table['Clear']}{color_table['Purple']}Start date and time: {date_time}")
+
+    parse_title = input(f"{color_table['Clear']}{color_table['Blue']}Title: ").capitalize()
+
+    folder_name = CreateFolder(parse_title, date_time).folder_name
+
     for i in range(1, 13):
         month = str(i)
         if len(month) == 1:
@@ -192,10 +211,10 @@ def main():
             day = str(k)
             if len(day) == 1:
                 day = '0' + str(k)
-            send_request(parse_title, month, day)
+            send_request(parse_title, month, day, folder_name, use_proxy)
 
 
-if name == "main":
+if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
