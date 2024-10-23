@@ -3,22 +3,23 @@ from bs4 import BeautifulSoup
 import requests
 import os
 import datetime
-from proxy_settings import proxy
-from proxy_settings import use_proxy
-from styles import style
-
+from Settings.proxy_settings import proxy
+from Settings.proxy_settings import use_proxy
+from OfflineVersion.styles import style
+from Settings import color_scheme
 
 proxies_set = {
   "http": proxy,
   "https": proxy
 }
 
-color_table = {'Blue': '\033[94m',
-               'Green': '\033[92m',
-               'Red': '\033[91m',
-               'Purple': '\033[95m',
-               'Mark': '\033[100m',
-               'Clear': '\033[0m'}
+color_dict = {'Blue': color_scheme.Blue,
+              'Green': color_scheme.Green,
+              'Red': color_scheme.Red,
+              'Purple': color_scheme.Purple,
+              'Mark': color_scheme.Mark,
+              'Clear': color_scheme.Clear
+              }
 
 
 class CreateFolder:
@@ -32,6 +33,29 @@ class CreateFolder:
             os.mkdir(self.folder_name)
         except FileExistsError:
             pass
+
+
+def t_parser_print():
+    print(f"{color_dict['Clear']}{color_dict['Green']}")
+    print("  ___________________________________________"
+          "____________________________________________________________")
+    print("  |   **********    ********      ***        "
+          "    ********        *******         ********     ********  |")
+    print("  |      **        **    **     **  **      "
+          "    **      **      **     **       ********     **      ** |")
+    print("  |     **        ********    **     **     "
+          "   **       **     **              **           **     **   |")
+    print("  |    **        **          **********    "
+          "   **********      **********      ********     **********   |")
+    print("  |   **        **          ***********   "
+          "   **  **                  **      **           **  **        |")
+    print("  |  **        **          **        **  "
+          "   **    **        **      **      ********     **    **       |")
+    print("  | **        **          **         **  "
+          "  **      **        ********      ********     **      **      |")
+    print("  ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯"
+          "¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯")
+    print(color_dict['Clear'])
 
 
 def datetime_calculate():
@@ -59,17 +83,17 @@ def send_request(title, month, day,  folder_path, using_proxy: bool = False):
                        F"|Online| https://telegra.ph/{title}-{month}-{day}</a></aside>"
                        F"</div>\n" + style)
 
-            print(f"{color_table['Mark']}{color_table['Green']}File_saved {title}-{month}-{day}.html")
+            print(f"{color_dict['Mark']}{color_dict['Green']}File_saved {title}-{month}-{day}.html")
     elif request.status_code == 404:
-        print(f"{color_table['Clear']}{color_table['Red']}N/a {title}-{month}-{day}")
+        print(f"{color_dict['Clear']}{color_dict['Red']}N/a {title}-{month}-{day}")
 
 
 def main():
     date_time = datetime_calculate()
 
-    print(f"{color_table['Clear']}{color_table['Purple']}Start date and time: {date_time}")
+    print(f"{color_dict['Clear']}{color_dict['Purple']}Start date and time: {date_time}")
 
-    parse_title = input(f"{color_table['Clear']}{color_table['Blue']}Title: ").capitalize()
+    parse_title = input(f"{color_dict['Clear']}{color_dict['Blue']}Title: ").capitalize()
 
     folder_name = CreateFolder(parse_title, date_time).folder_name
 
@@ -86,6 +110,7 @@ def main():
 
 if __name__ == "__main__":
     try:
+        t_parser_print()
         main()
     except KeyboardInterrupt:
-        print(f"{color_table['Clear']}{color_table['Purple']}Exit")
+        print(f"{color_dict['Clear']}{color_dict['Purple']}Exit")
