@@ -7,6 +7,7 @@ from Settings.proxy_settings import proxy
 from Settings.proxy_settings import use_proxy
 from OfflineVersion.styles import style
 from Settings import color_scheme
+import time
 
 proxies_set = {
   "http": proxy,
@@ -65,13 +66,33 @@ def datetime_calculate():
     return start_datetime
 
 
-def send_request(title, month, day,  folder_path, using_proxy: bool = False):
+def send_request(title, month, day, folder_path, using_proxy: bool = False):
     headers = {"User-Agent": UserAgent().random, "Accept": "text/html"}
 
-    if using_proxy:
-        request = requests.get(f'https://telegra.ph/{title}-{month}-{day}', headers, proxies=proxies_set)
-    else:
-        request = requests.get(f'https://telegra.ph/{title}-{month}-{day}', headers)
+    while True:
+        try:
+            if using_proxy:
+                request = requests.get(f'https://telegra.ph/{title}-{month}-{day}', headers, proxies=proxies_set)
+            else:
+                request = requests.get(f'https://telegra.ph/{title}-{month}-{day}', headers)
+            break
+        except TimeoutError:
+            print(f"{color_dict['Mark']}{color_dict['Red']}TimeOut Err https://telegra.ph/{title}-{month}-{day}")
+            time.sleep(1)
+            print(f"{color_dict['Mark']}{color_dict['Blue']}Retrying 1")
+            time.sleep(1)
+            print(f"{color_dict['Mark']}{color_dict['Blue']}Retrying 2")
+            time.sleep(1)
+            print(f"{color_dict['Mark']}{color_dict['Blue']}Retrying 3")
+        except requests.exceptions.ConnectionError:
+            print(f"{color_dict['Clear']}{color_dict['Red']}TimeOut Err"
+                  f" {color_dict['Mark']}{color_dict['Red']}https://telegra.ph/{title}-{month}-{day}")
+            time.sleep(1)
+            print(f"{color_dict['Mark']}{color_dict['Blue']}Retrying 1")
+            time.sleep(1)
+            print(f"{color_dict['Mark']}{color_dict['Blue']}Retrying 2")
+            time.sleep(1)
+            print(f"{color_dict['Mark']}{color_dict['Blue']}Retrying 3")
 
     request_text = request.text
     soup = BeautifulSoup(request_text, 'html.parser')
