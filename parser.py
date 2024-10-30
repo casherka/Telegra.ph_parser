@@ -156,7 +156,7 @@ def bot_main(parse_title, userid):
     date_time = datetime_calculate()
 
     folder_name = CreateFolder(f'{userid}/{parse_title}', date_time).folder_name
-    zip_file_name = f'{parse_title} {date_time.replace(':', ';')}'
+    zip_file_name = f"{parse_title} {date_time.replace(':', ';')}"
 
     for i in range(1, 13):
         month = str(i)
