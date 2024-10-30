@@ -68,7 +68,7 @@ async def start(message: Message, state: FSMContext):
     await state.update_data(Title=message.text)
     data = await state.get_data()
     await state.clear()
-    await message.answer(f'Запуск с названием: {data['Title']}...')
+    await message.answer(f"Запуск с названием: {data['Title']}...")
     try:
         os.mkdir(str(message.from_user.id))
     except FileExistsError:
