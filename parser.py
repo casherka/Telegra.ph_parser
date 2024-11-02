@@ -73,7 +73,7 @@ def datetime_calculate():
     return start_datetime
 
 
-def send_request(title, month, day, folder_path, using_proxy: bool = False, echo: bool = True):
+def parse(title, month, day, folder_path, using_proxy: bool = False, echo: bool = True):
     headers = {"User-Agent": UserAgent().random, "Accept": "text/html"}
 
     while True:
@@ -140,7 +140,7 @@ def main(parse_title):
             day = str(k)
             if len(day) == 1:
                 day = '0' + str(k)
-            send_request(parse_title, month, day, folder_name, use_proxy, True)
+            parse(parse_title, month, day, folder_name, use_proxy, True)
 
 
 def zipdir(path, ziph):
@@ -166,7 +166,7 @@ def bot_main(parse_title, userid):
             day = str(k)
             if len(day) == 1:
                 day = '0' + str(k)
-            send_request(parse_title, month, day, folder_name, use_proxy, False)
+            parse(parse_title, month, day, folder_name, use_proxy, False)
     zipf = zipfile.ZipFile(f'{userid}/{zip_file_name}.zip', 'w', zipfile.ZIP_DEFLATED)
     zipdir(f'{folder_name}', zipf)
     zipf.close()
