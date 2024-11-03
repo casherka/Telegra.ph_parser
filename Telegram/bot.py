@@ -1,6 +1,6 @@
 from aiogram import Bot, Dispatcher
-from bot_token import Token
-from Dispatchers.handlers import router
+from Telegram.bot_token import Token
+from Telegram.Dispatchers.handlers import router
 from Telegram.Database.models import database_main
 import asyncio
 
