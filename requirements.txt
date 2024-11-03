@@ -1,6 +1,6 @@
 aiogram==3.13.1
 beautifulsoup4==4.10.0
-fake-useragent==0.1.11
-requests==2.26.0
+fake-useragent==1.5.1
+requests==2.31.0
 SQLAlchemy==2.0.36
 aiosqlite==0.20.0
