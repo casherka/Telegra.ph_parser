@@ -39,4 +39,4 @@ jobs:
         python -m pip install -r requirements.txt
     - name: run main.py
       run: | 
-        python Telegram/bot.py
+        python main.py
